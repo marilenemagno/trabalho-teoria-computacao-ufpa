@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validação com Expressões Regulares</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .valid {
+            border: 2px solid green;
+        }
+        .invalid {
+            border: 2px solid red;
+        }
+        .feedback {
+            font-size: 0.8em;
+            margin-top: 5px;
+        }
+        .valid-feedback {
+            color: green;
+        }
+        .invalid-feedback {
+            color: red;
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .examples {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Validação com Expressões Regulares</h1>
+    
+    <div class="form-group">
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" placeholder="Ex: Alan Turing">
+        <div class="examples">Exemplos válidos: Alan Turing, Noam Chomsky | Inválidos: 1Alan, Alan, A1an</div>
+        <div class="feedback" id="nome-feedback"></div>
+    </div>
+    
+    <div class="form-group">
+        <label for="email">E-mail:</label>
+        <input type="text" id="email" placeholder="Ex: a@a.br">
+        <div class="examples">Exemplos válidos: a@a.br, divulga@ufpa.br | Inválidos: @, a@.br, T@teste.br</div>
+        <div class="feedback" id="email-feedback"></div>
+    </div>
+    
+    <div class="form-group">
+        <label for="senha">Senha:</label>
+        <input type="password" id="senha" placeholder="8 caracteres com pelo menos 1 maiúscula e 1 número">
+        <div class="examples">Exemplos válidos: 518R2r5e, F123456A | Inválidos: F1234567A, abcdefgH</div>
+        <div class="feedback" id="senha-feedback"></div>
+    </div>
+    
+    <div class="form-group">
+        <label for="cpf">CPF:</label>
+        <input type="text" id="cpf" placeholder="Ex: 123.456.789-09">
+        <div class="examples">Formato: xxx.xxx.xxx-xx</div>
+        <div class="feedback" id="cpf-feedback"></div>
+    </div>
+    
+    <div class="form-group">
+        <label for="telefone">Telefone:</label>
+        <input type="text" id="telefone" placeholder="Ex: (91) 99999-9999">
+        <div class="examples">Formatos válidos: (xx) 9xxxx-xxxx, (xx) 9xxxxxxxx, xx 9xxxxxxxx</div>
+        <div class="feedback" id="telefone-feedback"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Expressões regulares
+            const patterns = {
+                nome: /^[A-Z][a-z]+ [A-Z][a-z]+$/,
+                email: /^[a-z]+@[a-z]+\.br$/,
+                senha: /^(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{8}$/,
+                cpf: /^\d{3}\.\d{3}\.\d{3}-\d{2}$/,
+                telefone: /^(\(\d{2}\) \d{5}-\d{4}|\(\d{2}\) \d{9}|\d{2} \d{9})$/
+            };
+            
+            // Mensagens de feedback
+            const messages = {
+                nome: {
+                    valid: "Nome válido!",
+                    invalid: "Formato inválido. Deve ser: Nome Sobrenome (ambos começando com maiúscula, sem números ou caracteres especiais)"
+                },
+                email: {
+                    valid: "E-mail válido!",
+                    invalid: "Formato inválido. Deve ser: letras minúsculas + @ + letras minúsculas + .br"
+                },
+                senha: {
+                    valid: "Senha válida!",
+                    invalid: "Formato inválido. Deve ter exatamente 8 caracteres com pelo menos 1 letra maiúscula e 1 número"
+                },
+                cpf: {
+                    valid: "CPF válido!",
+                    invalid: "Formato inválido. Deve ser: xxx.xxx.xxx-xx"
+                },
+                telefone: {
+                    valid: "Telefone válido!",
+                    invalid: "Formato inválido. Formatos aceitos: (xx) 9xxxx-xxxx, (xx) 9xxxxxxxx, xx 9xxxxxxxx"
+                }
+            };
+            
+            // Função de validação
+            function validateField(fieldId) {
+                const input = document.getElementById(fieldId);
+                const feedback = document.getElementById(`${fieldId}-feedback`);
+                const value = input.value.trim();
+                
+                if (value === '') {
+                    input.classList.remove('valid', 'invalid');
+                    feedback.textContent = '';
+                    feedback.className = 'feedback';
+                    return;
+                }
+                
+                if (patterns[fieldId].test(value)) {
+                    input.classList.remove('invalid');
+                    input.classList.add('valid');
+                    feedback.textContent = messages[fieldId].valid;
+                    feedback.classList.remove('invalid-feedback');
+                    feedback.classList.add('valid-feedback');
+                } else {
+                    input.classList.remove('valid');
+                    input.classList.add('invalid');
+                    feedback.textContent = messages[fieldId].invalid;
+                    feedback.classList.remove('valid-feedback');
+                    feedback.classList.add('invalid-feedback');
+                }
+            }
+            
+            // Adicionar eventos
+            document.getElementById('nome').addEventListener('input', () => validateField('nome'));
+            document.getElementById('email').addEventListener('input', () => validateField('email'));
+            document.getElementById('senha').addEventListener('input', () => validateField('senha'));
+            document.getElementById('cpf').addEventListener('input', () => validateField('cpf'));
+            document.getElementById('telefone').addEventListener('input', () => validateField('telefone'));
+        });
+    </script>
+</body>
+</html>
